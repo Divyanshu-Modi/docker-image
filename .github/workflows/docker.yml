@@ -10,17 +10,10 @@ on:
   workflow_dispatch:
    
 env:
-  # Change these values if you have forked it for your own works
-  # Use Lowercase vaue of your Username
-  GITHUB_USERNAME: dakkshesh07
-  GITHUB_EMAIL: dakkshesh5@gmail.com
-  GITHUB_ORG: neutron-toolchains
-
-  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
-  # Image name and tag. MUST be lowercase
-  IMAGE_NAME: docker-image
-  IMAGE_TAG: arch-neutron
+  USER_EMAIL: ${{ secrets.USER_EMAIL }}
+  USER_NAME: ${{ secrets.USER_NAME }}
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  PASSWORD: ${{ secrets.PASSWORD }}
 
 jobs:
   push:
@@ -30,17 +23,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Configuring git
-        run: |
-          git config --global user.name $GITHUB_USERNAME
-          git config --global user.email $GITHUB_EMAIL
-      - name: Logging in to Docker
-        run: |
-          echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
       - name: Building the Image
         run: |
-          docker build -t ghcr.io/${GITHUB_ORG}/${IMAGE_NAME}:${IMAGE_TAG} .
-          echo "Build Completed Successfully!"
+          docker build -f Dockerfile . -t atomxorg/arch-linux:kernel
+          echo "$PASSWORD" | docker login -u "atomxorg" --password-stdin
       - name: Pushing the Image
         run: |
-          docker push ghcr.io/${GITHUB_ORG}/${IMAGE_NAME}:${IMAGE_TAG}
+          docker push atomxorg/arch-linux:kernel

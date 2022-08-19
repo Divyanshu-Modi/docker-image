@@ -32,24 +32,19 @@ pacman -Syyu --noconfirm 2>&1 | grep -v "warning: could not get file information
 # Install Development Packages
 pacman -Sy --noconfirm \
 	sudo \
-	nano \
 	git \
 	curl \
 	wget \
-	rsync \
 	aarch64-linux-gnu-binutils \
 	base-devel \
 	bc \
 	bison \
-	ccache \
 	clang \
 	cpio \
 	cmake \
 	flex \
 	gcc \
 	gcc-libs \
-	github-cli \
-	gperf \
 	jemalloc \
 	jdk-openjdk \
 	libelf \
@@ -57,20 +52,14 @@ pacman -Sy --noconfirm \
 	lz4 \
 	llvm \
 	multilib-devel \
-	ninja \
 	openssl \
 	patchelf \
 	perf \
 	perl \
 	python3 \
 	python-pip \
-	uboot-tools \
-	zip \
-	zstd
-
-# More Packages
-pacman -Sy --noconfirm \
-	tmate tmux htop
+	unzip \
+	zip
 
 # Symlinks for python an
 ln -sf /usr/bin/pip3.10 /usr/bin/pip3
@@ -78,12 +67,25 @@ ln -sf /usr/bin/pip3.10 /usr/bin/pip
 ln -sf /usr/bin/python3.10 /usr/bin/python3
 ln -sf /usr/bin/python3.10 /usr/bin/python
 
-# python and pip version
-python3 --version
-pip3 --version
-
 # Install Some pip packages
-pip3 install \
-	telegram-send
+pip3 install telegram-send
+
+get() {
+    if [[ "$3" == "clang" ]]; then
+        curl -LSs https://gitlab.com/dakkshesh07/neutron-clang/-/archive/Neutron-16/neutron-clang-Neutron-16.zip -o "clang".zip
+    else
+        curl -LSs  "https://codeload.github.com/$1/zip/$2" -o "$3".zip
+    fi
+    unzip "$3".zip -d. && rm "$3".zip && mv -v "${1##*/}-$2" "/usr/${3}"
+    find "/usr/${3}" -exec chmod +x {} \;
+}
+
+get mvaisakh/gcc-arm64 gcc-master gcc64
+get mvaisakh/gcc-arm gcc-master gcc32
+get dakkshesh07/neutron-clang Neutron-16 clang
+
+# Fix for docker's unusal locale config
+sed -i s/"#en_US.UTF-8 UTF-8"/"en_US.UTF-8 UTF-8"/g /etc/locale.gen
+locale-gen
 
 echo 'package installtion completed'
