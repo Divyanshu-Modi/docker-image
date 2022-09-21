@@ -16,8 +16,7 @@ useradd -m -G wheel -s /bin/bash auruser
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # AUR Packages
-sudo -u auruser yay -S --noconfirm \
-	alhp-keyring alhp-mirrorlist
+sudo -u auruser yay -S --noconfirm alhp-keyring alhp-mirrorlist
 
 # Enable ALHP repos
 sed -i 's/#Server/Server/g' /etc/pacman.d/alhp-mirrorlist
@@ -31,11 +30,9 @@ pacman -Syyu --noconfirm 2>&1 | grep -v "warning: could not get file information
 
 # Install Development Packages
 pacman -Sy --noconfirm \
-	sudo \
 	git \
 	curl \
 	wget \
-	aarch64-linux-gnu-binutils \
 	base-devel \
 	bc \
 	bison \
@@ -45,6 +42,7 @@ pacman -Sy --noconfirm \
 	flex \
 	gcc \
 	gcc-libs \
+	github-cli \
 	jemalloc \
 	jdk-openjdk \
 	libelf \
@@ -59,7 +57,8 @@ pacman -Sy --noconfirm \
 	python3 \
 	python-pip \
 	unzip \
-	zip
+	zip \
+	zstd
 
 # Symlinks for python an
 ln -sf /usr/bin/pip3.10 /usr/bin/pip3
@@ -71,18 +70,20 @@ ln -sf /usr/bin/python3.10 /usr/bin/python
 pip3 install telegram-send
 
 get() {
-    if [[ "$3" == "clang" ]]; then
-        curl -LSs https://gitlab.com/dakkshesh07/neutron-clang/-/archive/Neutron-16/neutron-clang-Neutron-16.zip -o "clang".zip
-    else
-        curl -LSs  "https://codeload.github.com/$1/zip/$2" -o "$3".zip
-    fi
+    curl -LSs  "https://codeload.github.com/$1/zip/$2" -o "$3".zip
     unzip "$3".zip -d. && rm "$3".zip && mv -v "${1##*/}-$2" "/usr/${3}"
     find "/usr/${3}" -exec chmod +x {} \;
 }
 
 get mvaisakh/gcc-arm64 gcc-master gcc64
 get mvaisakh/gcc-arm gcc-master gcc32
-get dakkshesh07/neutron-clang Neutron-16 clang
+
+# Latest clang will be used
+mkdir -p /usr/clang
+r_tag=$(curl --silent "https://raw.githubusercontent.com/Neutron-Toolchains/clang-build-catalogue/main/latest.txt" | grep -A1 tag | tail -n1)
+wget --quiet --show-progress "https://github.com/Neutron-Toolchains/clang-build-catalogue/releases/download/$r_tag/neutron-clang-$r_tag.tar.zst"
+tar -I zstd -xf *.tar.zst --directory=/usr/clang
+find "/usr/clang" -exec chmod +x {} \;
 
 # Fix for docker's unusal locale config
 sed -i s/"#en_US.UTF-8 UTF-8"/"en_US.UTF-8 UTF-8"/g /etc/locale.gen
