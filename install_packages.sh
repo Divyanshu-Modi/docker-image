@@ -69,6 +69,10 @@ ln -sf /usr/bin/python3.10 /usr/bin/python
 # Install Some pip packages
 pip3 install telegram-send
 
+# Zstd update
+wget https://github.com/dakkshesh07/zstd-pkgbuild/releases/download/1.5.2-8/zstd-1.5.2-8-x86_64.pkg.tar.zst
+pacman -U --noconfirm zstd-1.5.2-8-x86_64.pkg.tar.zst
+
 get() {
     curl -LSs  "https://codeload.github.com/$1/zip/$2" -o "$3".zip
     unzip "$3".zip -d. && rm "$3".zip && mv -v "${1##*/}-$2" "/usr/${3}"
