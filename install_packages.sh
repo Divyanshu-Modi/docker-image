@@ -85,9 +85,10 @@ get mvaisakh/gcc-arm gcc-master gcc32
 # Latest clang will be used
 mkdir -p /usr/clang
 r_tag=$(curl --silent "https://raw.githubusercontent.com/Neutron-Toolchains/clang-build-catalogue/main/latest.txt" | grep -A1 tag | tail -n1)
-wget --quiet --show-progress "https://github.com/Neutron-Toolchains/clang-build-catalogue/releases/download/$r_tag/neutron-clang-$r_tag.tar.zst"
-tar -I zstd -xf *.tar.zst --directory=/usr/clang
+wget --quiet "https://github.com/Neutron-Toolchains/clang-build-catalogue/releases/download/$r_tag/neutron-clang-$r_tag.tar.zst"
+tar -I zstd -xf neutron-clang-$r_tag.tar.zst --directory=/usr/clang
 find "/usr/clang" -exec chmod +x {} \;
+echo 'clang working'
 
 # Fix for docker's unusal locale config
 sed -i s/"#en_US.UTF-8 UTF-8"/"en_US.UTF-8 UTF-8"/g /etc/locale.gen
