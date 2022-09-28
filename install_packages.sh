@@ -79,16 +79,27 @@ get() {
     find "/usr/${3}" -exec chmod +x {} \;
 }
 
+aosp_clang() {
+# Latest clang will be used
+    curl -LSs https://gitlab.com/neebe000/prebuilts_clang_host_linux-x86_standalone/-/archive/clang-r468909/prebuilts_clang_host_linux-x86_standalone-clang-r468909.zip -o clang.zip
+    unzip clang.zip -d. && rm clang.zip && mv -v "prebuilts_clang_host_linux-x86_standalone-clang-r468909" "/usr/clang"
+    find "/usr/clang" -exec chmod +x {} \;
+}
+
+neutron_clang() {
+# Latest clang will be used
+    mkdir -p /usr/clang
+    r_tag=$(curl --silent "https://raw.githubusercontent.com/Neutron-Toolchains/clang-build-catalogue/main/latest.txt" | grep -A1 tag | tail -n1)
+    wget --quiet "https://github.com/Neutron-Toolchains/clang-build-catalogue/releases/download/$r_tag/neutron-clang-$r_tag.tar.zst"
+    tar -I zstd -xf neutron-clang-$r_tag.tar.zst --directory=/usr/clang
+    find "/usr/clang" -exec chmod +x {} \;
+    echo 'clang working'
+}
+
 get mvaisakh/gcc-arm64 gcc-master gcc64
 get mvaisakh/gcc-arm gcc-master gcc32
+aosp_clang
 
-# Latest clang will be used
-mkdir -p /usr/clang
-r_tag=$(curl --silent "https://raw.githubusercontent.com/Neutron-Toolchains/clang-build-catalogue/main/latest.txt" | grep -A1 tag | tail -n1)
-wget --quiet "https://github.com/Neutron-Toolchains/clang-build-catalogue/releases/download/$r_tag/neutron-clang-$r_tag.tar.zst"
-tar -I zstd -xf neutron-clang-$r_tag.tar.zst --directory=/usr/clang
-find "/usr/clang" -exec chmod +x {} \;
-echo 'clang working'
 
 # Fix for docker's unusal locale config
 sed -i s/"#en_US.UTF-8 UTF-8"/"en_US.UTF-8 UTF-8"/g /etc/locale.gen
