@@ -98,7 +98,7 @@ neutron_clang() {
 
 get mvaisakh/gcc-arm64 gcc-master gcc64
 get mvaisakh/gcc-arm gcc-master gcc32
-neutron_clang
+aosp_clang
 
 
 # Fix for docker's unusal locale config
