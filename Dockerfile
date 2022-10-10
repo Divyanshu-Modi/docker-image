@@ -29,4 +29,4 @@ RUN bash /tmp/config.sh
 RUN rm -rf /tmp/{{install_packages,config}.sh,remove}
 
 # docker run command
-CMD ["bash"]
+CMD ["/usr/bin/bash"]

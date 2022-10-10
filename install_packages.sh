@@ -5,7 +5,7 @@ sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 
 # Refresh mirror list
 pacman-key --init
-pacman -Syu --noconfirm reflector rsync curl git base-devel 2>&1 | grep -v "warning: could not get file information"
+pacman -Syu --noconfirm sudo reflector rsync curl git base-devel 2>&1 | grep -v "warning: could not get file information"
 reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 
 # Download fresh package databases from the servers
@@ -37,25 +37,35 @@ pacman -Sy --noconfirm \
 	bc \
 	bison \
 	clang \
+	ccache \
 	cpio \
 	cmake \
 	flex \
 	gcc \
 	gcc-libs \
+	glibc \
+	lib32-glibc \
 	github-cli \
+	imagemagick \
 	jemalloc \
 	jdk-openjdk \
 	libelf \
 	lld \
+	lzip \
 	lz4 \
 	llvm \
+	make \
+	kmod \
 	multilib-devel \
+	ncurses \
+	nano \
 	openssl \
 	patchelf \
 	perf \
 	perl \
 	python3 \
 	python-pip \
+	svn \
 	unzip \
 	zip \
 	zstd
@@ -104,5 +114,8 @@ neutron_clang
 # Fix for docker's unusal locale config
 sed -i s/"#en_US.UTF-8 UTF-8"/"en_US.UTF-8 UTF-8"/g /etc/locale.gen
 locale-gen
+
+# Fix pod2man missing error
+export PATH=/usr/bin/core_perl:$PATH
 
 echo 'package installtion completed'
