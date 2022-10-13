@@ -91,8 +91,8 @@ get() {
 
 aosp_clang() {
 # Latest clang will be used
-    curl -LSs https://gitlab.com/neebe000/prebuilts_clang_host_linux-x86_standalone/-/archive/clang-r468909/prebuilts_clang_host_linux-x86_standalone-clang-r468909.zip -o clang.zip
-    unzip clang.zip -d. && rm clang.zip && mv -v "prebuilts_clang_host_linux-x86_standalone-clang-r468909" "/usr/clang"
+    curl -LSs https://gitlab.com/neebe000/prebuilts_clang_host_linux-x86_standalone/-/archive/clang-r468909b/prebuilts_clang_host_linux-x86_standalone-clang-r468909b.zip -o clang.zip
+    unzip clang.zip -d. && rm clang.zip && mv -v "prebuilts_clang_host_linux-x86_standalone-clang-r468909b" "/usr/clang"
     find "/usr/clang" -exec chmod +x {} \;
 }
 
